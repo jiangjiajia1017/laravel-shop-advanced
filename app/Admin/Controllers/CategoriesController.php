@@ -2,14 +2,14 @@
 
 namespace App\Admin\Controllers;
 
-use App\Http\Requests\Request;
 use App\Models\Category;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Layout\Content;
-use Encore\Admin\Show;
+use Illuminate\Http\Request;
+use function Symfony\Component\VarDumper\Dumper\esc;
 
 class CategoriesController extends Controller
 {
@@ -114,8 +114,8 @@ class CategoriesController extends Controller
             // 定义一个名为『是否目录』的单选框
             $form->radio('is_directory', '是否目录')
                 ->options(['1' => '是', '0' => '否'])
-                ->default('0')
-                ->rules('required');
+                ->default('0');
+              //  ->rules('required');
 
             // 定义一个名为父类目的下拉框
             $form->select('parent_id', '父类目')->ajax('/admin/api/categories');
@@ -126,10 +126,12 @@ class CategoriesController extends Controller
 
     public function  apiIndex(Request $request){
         $search = $request->input('q');
-        $result = Category::query()
-            ->where('is_directory', true)
-            ->where('name', 'like', '%'.$search.'%')
-            ->paginate();
+        $query  = Category::query()
+            ->where('is_directory', $request->is_develory ?  true :  false );
+        if($search){
+            $query = $query->where('name', 'like', '%'.$search.'%');
+        }
+        $result = $query->paginate();
 
         // 把查询出来的结果重新组装成 Laravel-Admin 需要的格式
         $result->setCollection($result->getCollection()->map(function (Category $category) {

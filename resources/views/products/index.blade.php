@@ -11,6 +11,30 @@
             <div class="form-row">
               <div class="col-md-9">
                 <div class="form-row">
+                  <!-- 面包屑开始 -->
+                  <div class="col-auto category-breadcrumb">
+                    <!-- 添加一个名为全部的链接 直接跳转到商品列表页面 -->
+                    <a class="all-products" href="{{route('products.index')}}">全部</a>
+                    <!-- 如果当前是通过类目筛选的 -->
+                    @if($category)
+                      <!-- 便利当前类目所有上级类目 -->
+                        @foreach($category->ancestors as $ancestor)
+                          <!-- 添加当前类的 祖先的类目名称链接 -->
+                          <span class="category">
+                            <a class="" href="{{route('products.index',['category_id' => $ancestor->id])}}"></a>
+                          </span>
+                            <span>&gt;</span>
+                        @endforeach
+                      <!-- 最后展示当前类目名称 -->
+                      <span class="category">
+                        {{$category->name}}}
+                      </span>
+                      <span></span>
+                      <!-- 当前类目的ID， 当用户调整排序方式时 可以保证category_id 不丢失 -->
+                      <input name="category_id" type="hidden" value="{{$category->id}}">
+                    @endif
+                  </div>
+                  <!-- 面包屑结束 -->
                   <div class="col-auto"><input type="text" class="form-control form-control-sm" name="search" placeholder="搜索"></div>
                   <div class="col-auto"><button class="btn btn-primary btn-sm">搜索</button></div>
                 </div>

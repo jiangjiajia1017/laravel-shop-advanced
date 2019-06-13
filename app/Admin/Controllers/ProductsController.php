@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
@@ -63,8 +64,11 @@ class ProductsController extends Controller
     {
         $grid = new Grid(new Product);
 
+        $grid->model()->with(['category']);
+
         $grid->id('ID')->sortable();
         $grid->title('商品名称');
+        $grid->column('category.name', '类目名称');
         $grid->on_sale('已上架')->display(function ($value) {
             return $value ? '是' : '否';
         });
@@ -98,6 +102,15 @@ class ProductsController extends Controller
 
         // 创建一个输入框，第一个参数 title 是模型的字段名，第二个参数是该字段描述
         $form->text('title', '商品名称')->rules('required');
+
+        $form->select('category_id', '类目名称')->options(function ($category_id){
+            $category = Category::find($category_id);
+            if($category){
+                return [$category->id => $category->name];
+            }
+
+        })->ajax(route('category.api').'?is_directory=0');
+
 
         // 创建一个选择图片的框
         $form->image('image', '封面图片')->rules('required|image');

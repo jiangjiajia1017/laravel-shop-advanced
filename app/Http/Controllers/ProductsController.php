@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\InvalidRequestException;
+use App\Models\Category;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
+use phpDocumentor\Reflection\Types\Null_;
 
 class ProductsController extends Controller
 {
@@ -41,10 +44,26 @@ class ProductsController extends Controller
             }
         }
 
+        if($category_id = $request->input('category_id') && $category = Category::find($request->input('category_id'))){
+
+            if($category->is_directory){
+                // 则筛选出该父类目下所有子类目的商品
+                $builder->whereHas('category', function ($query) use ($category) {
+                    // 这里的逻辑参考本章第一节
+                    $query->where('path', 'like', $category->path.$category->id.'-%');
+                });
+
+            }else {
+                // 如果这不是一个父类目，则直接筛选此类目下的商品
+                $builder->where('category_id', $category->id);
+            }
+        }
+
         $products = $builder->paginate(16);
 
         return view('products.index', [
             'products' => $products,
+            'category' => $category ?? Null,
             'filters'  => [
                 'search' => $search,
                 'order'  => $order,

@@ -71,6 +71,7 @@ class Category extends Model
      */
     public function getAncestorsAttribute()
     {
+
         return Category::query()
             ->whereIn('id', $this->getPathIdsAttribute())
             ->orderBy('level')
