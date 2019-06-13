@@ -21,13 +21,13 @@
                         @foreach($category->ancestors as $ancestor)
                           <!-- 添加当前类的 祖先的类目名称链接 -->
                           <span class="category">
-                            <a class="" href="{{route('products.index',['category_id' => $ancestor->id])}}"></a>
+                            <a class="" href="{{route('products.index',['category_id' => $ancestor->id])}}"> {{$ancestor->name}}</a>
                           </span>
                             <span>&gt;</span>
                         @endforeach
                       <!-- 最后展示当前类目名称 -->
                       <span class="category">
-                        {{$category->name}}}
+                        {{$category->name}}
                       </span>
                       <span></span>
                       <!-- 当前类目的ID， 当用户调整排序方式时 可以保证category_id 不丢失 -->

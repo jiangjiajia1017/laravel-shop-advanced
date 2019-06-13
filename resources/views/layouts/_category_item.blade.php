@@ -1,6 +1,6 @@
 <!-- 如果当前类目有children字段 并且children字段不为空 -->
 @if(isset($category['children']) && count($category['children']) > 0)
-    <li>
+    <li class="dropdown-submenu">
         <a href="{{route('products.index', ['category_id'=>$category['id']])}}" class="dropdown-item dropdown-toggle" data-toggle="dropdown">
             {{$category['name']}}
         </a>
