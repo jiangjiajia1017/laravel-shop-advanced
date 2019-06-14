@@ -4,56 +4,14 @@ namespace App\Admin\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Http\Controllers\Controller;
 use Encore\Admin\Controllers\HasResourceActions;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
-use Encore\Admin\Layout\Content;
-use Encore\Admin\Show;
 
-class ProductsController extends Controller
+
+class ProductsController extends CommonProductsController
 {
     use HasResourceActions;
-
-    /**
-     * Index interface.
-     *
-     * @param Content $content
-     * @return Content
-     */
-    public function index(Content $content)
-    {
-        return $content
-            ->header('商品列表')
-            ->body($this->grid());
-    }
-
-    /**
-     * Edit interface.
-     *
-     * @param mixed $id
-     * @param Content $content
-     * @return Content
-     */
-    public function edit($id, Content $content)
-    {
-        return $content
-            ->header('编辑商品')
-            ->body($this->form()->edit($id));
-    }
-
-    /**
-     * Create interface.
-     *
-     * @param Content $content
-     * @return Content
-     */
-    public function create(Content $content)
-    {
-        return $content
-            ->header('创建商品')
-            ->body($this->form());
-    }
 
     /**
      * Make a grid builder.
@@ -63,7 +21,7 @@ class ProductsController extends Controller
     protected function grid()
     {
         $grid = new Grid(new Product);
-        $grid->model()->where('type', Product::TYPE_NORMAL)->with(['category']);
+        $grid->model()->where('type', $this->getProductType())->with(['category']);
 
         $grid->id('ID')->sortable();
         $grid->title('商品名称');
@@ -99,7 +57,7 @@ class ProductsController extends Controller
     {
         $form = new Form(new Product);
 
-        $form->hidden('type')->value(Product::TYPE_NORMAL);
+        $form->hidden('type')->value($this->getProductType());
         // 创建一个输入框，第一个参数 title 是模型的字段名，第二个参数是该字段描述
         $form->text('title', '商品名称')->rules('required');
 
@@ -135,5 +93,10 @@ class ProductsController extends Controller
         });
 
         return $form;
+    }
+
+    public function getProductType()
+    {
+        return Product::TYPE_NORMAL;
     }
 }
