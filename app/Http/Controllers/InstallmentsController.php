@@ -18,4 +18,20 @@ class InstallmentsController extends Controller
 
     }
 
+    public function show(Installment $installment)
+    {
+        $this->authorize('own', $installment);
+        $items = $installment->items()->orderBy('sequence')->get();
+        return view('installments.show',
+            [
+                'installment' => $installment,
+                'items'       => $items,
+                //下一个未付款的还款计划
+                'nextItem' => $items->where('paid_at', null)->first(),
+            ]
+        );
+
+
+    }
+
 }

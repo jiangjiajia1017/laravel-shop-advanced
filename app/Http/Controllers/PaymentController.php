@@ -190,7 +190,7 @@ class PaymentController extends Controller
         // 计算每一期的本金
         $base = bcdiv($order->total_amount, $count, 2);
         //计算第一期手续费
-        $fee = bcmul($base, $installment->fee_rate, 2);
+        $fee = bcdiv(bcmul($base, $installment->fee_rate, 2), 100, 2);
 
         for ($i = 0 ; $i< $count; $i++){
 
