@@ -25,6 +25,7 @@ $factory->define(Product::class, function (Faker $faker) {
 
     return [
         'title'        => $faker->word,
+        'title'        => $faker->sentence,
         'category_id'  => $category ?  $category->id : null ,
         'description'  => $faker->sentence,
         'image'        => $image,

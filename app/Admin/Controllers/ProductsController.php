@@ -60,7 +60,8 @@ class ProductsController extends CommonProductsController
         $form->hidden('type')->value($this->getProductType());
         // 创建一个输入框，第一个参数 title 是模型的字段名，第二个参数是该字段描述
         $form->text('title', '商品名称')->rules('required');
-
+        // 放在商品名称后面
+        $form->text('long_title', '商品长标题')->rules('required');
         $form->select('category_id', '类目名称')->options(function ($category_id){
             $category = Category::find($category_id);
             if($category){
