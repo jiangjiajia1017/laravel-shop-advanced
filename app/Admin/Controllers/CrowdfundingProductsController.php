@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Jobs\SyncOneProductToES;
 use App\Models\Category;
 use App\Models\CrowdfundingProduct;
 use App\Models\Product;
@@ -80,6 +81,12 @@ class CrowdfundingProductsController extends CommonProductsController
 
         $form->saving(function (Form $form){
             $form->model()->price = collect($form->input('skus'))->where(Form::REMOVE_FLAG_NAME, 0)->min('price');
+        });
+
+        //将商品同步到 Elasticsearch
+        $form->saved(function (Form $form){
+            $product = $form->model();
+            $this->dispatch(new SyncOneProductToES($product));
         });
         return $form;
     }

@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Jobs\SyncOneProductToES;
 use App\Models\Category;
 use App\Models\Product;
 use Encore\Admin\Controllers\HasResourceActions;
@@ -98,6 +99,11 @@ class ProductsController extends CommonProductsController
             $form->model()->price = collect($form->input('skus'))->where(Form::REMOVE_FLAG_NAME, 0)->min('price') ?: 0;
         });
 
+        //将商品同步到 Elasticsearch
+        $form->saved(function (Form $form){
+            $product = $form->model();
+            $this->dispatch(new SyncOneProductToES($product));
+        });
         return $form;
     }
 
